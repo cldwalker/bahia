@@ -1,3 +1,5 @@
+require 'open3'
+
 module Bahia
   class DetectionError < StandardError
     def initialize(name)
