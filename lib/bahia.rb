@@ -1,6 +1,8 @@
 require 'open3'
 
 module Bahia
+  VERSION = '0.1.0'
+
   class DetectionError < StandardError
     def initialize(name)
       super "Unable to detect #{name}. Set it with Bahia.#{name}"
