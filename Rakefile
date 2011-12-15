@@ -29,7 +29,7 @@ end
 
 desc 'Run tests'
 task :test do |t|
-  sh 'bacon -q -Ilib -I. test/*_test.rb'
+  sh 'rspec spec'
 end
 
 task :default => :test
