@@ -31,7 +31,13 @@ module Bahia
     arr[0][/^([^:]+):\d+/] or raise DetectionError.new(:project_directory)
     file = $1
     raise DetectionError.new(:project_directory) unless File.exists?(file)
-    # Assume include happens in {spec,test}/helper.rb
-    File.dirname File.dirname(file)
+
+    dir = File.dirname(file)
+    # Assume test directory called spec or test
+    until dir[%r{/(spec|test)$}]
+      raise DetectionError.new(:project_directory) if dir == '/'
+      dir = File.dirname(dir)
+    end
+    File.dirname dir
   end
 end

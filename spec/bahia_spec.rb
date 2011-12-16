@@ -2,38 +2,52 @@ require 'bahia'
 require 'rspec'
 
 describe Bahia do
+  let(:test_class) { Class.new }
 
   before do
     Bahia.command = Bahia.project_directory = Bahia.command_method = nil
   end
 
-  subject do
-    Module.new.send :include, Bahia
+  def stub_directory(dir)
+    Bahia.should_receive(:caller).and_return(["#{dir}/helper.rb:5"])
+    File.should_receive(:exists?).and_return(true)
   end
 
-  it "raises DetectionError if directory not detected" do
-    Bahia.should_receive(:caller).and_return(["(eval)"])
-    msg = Bahia::DetectionError.new(:project_directory).message
-    expect { subject }.to raise_error(msg)
+  subject { test_class.send :include, Bahia }
+
+  context "fails to include and raises DetectionError" do
+    it "if directory not detected" do
+      Bahia.should_receive(:caller).and_return(["(eval)"])
+      msg = Bahia::DetectionError.new(:project_directory).message
+      expect { subject }.to raise_error(msg)
+    end
+
+    it "if directory does not exist" do
+      Bahia.should_receive(:caller).and_return(["(irb):5"])
+      msg = Bahia::DetectionError.new(:project_directory).message
+      expect { subject }.to raise_error(msg)
+    end
+
+    it "if test directory is not test or spec" do
+      stub_directory '/dir/my_test'
+      msg = Bahia::DetectionError.new(:project_directory).message
+      expect { subject }.to raise_error(msg)
+    end
+
+    it "if command isn't detected" do
+      stub_directory '/dir/spec'
+      Dir.should_receive(:[]).with('/dir/bin/*').and_return([])
+      msg = Bahia::DetectionError.new(:command).message
+      expect { subject }.to raise_error(msg)
+    end
   end
 
-  it "raises DetectionError if directory does not exist" do
-    Bahia.should_receive(:caller).and_return(["(irb):5"])
-    msg = Bahia::DetectionError.new(:project_directory).message
-    expect { subject }.to raise_error(msg)
-  end
+  context "on successful inclusion" do
+    let(:executable) { '/dir/bin/blarg' }
 
-  it "raises DetectionError if command isn't detected" do
-    Bahia.should_receive(:set_project_directory).and_return('/dir')
-    Dir.should_receive(:[]).with('/dir/bin/*').and_return([])
-    msg = Bahia::DetectionError.new(:command).message
-    expect { subject }.to raise_error(msg)
-  end
-
-  context "on inclusion" do
     before do
-      Bahia.stub(:set_project_directory).and_return('/dir')
-      Dir.stub(:[]).with('/dir/bin/*').and_return(['/dir/bin/blarg'])
+      stub_directory '/dir/spec'
+      Dir.stub(:[]).with('/dir/bin/*').and_return([executable])
       subject
     end
 
@@ -42,7 +56,7 @@ describe Bahia do
     end
 
     it "sets command" do
-      Bahia.command.should == '/dir/bin/blarg'
+      Bahia.command.should == executable
     end
 
     it "sets command_method" do
@@ -51,6 +65,12 @@ describe Bahia do
 
     it "defines helper method named blarg" do
       Bahia.instance_method(:blarg).should_not be_nil
+    end
+
+    it "helper method blarg calls Open3.capture with correct args" do
+      Open3.should_receive(:capture3).with(
+        {'RUBYLIB' => "/dir/lib:#{ENV['RUBYLIB']}"}, executable, 'arg1', 'arg2')
+      test_class.new.blarg('arg1 arg2')
     end
   end
 end
