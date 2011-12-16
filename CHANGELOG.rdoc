@@ -1,2 +1,6 @@
+== 0.2
+* Tests!
+* Improve finding project directory
+
 == 0.1
 * Bahia viva!
