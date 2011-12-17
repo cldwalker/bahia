@@ -1,4 +1,5 @@
 require 'open3'
+require 'shellwords'
 
 module Bahia
   VERSION = '0.2.0'
@@ -19,7 +20,7 @@ module Bahia
     self.command_method ||= File.basename(command)
 
     define_method(command_method) do |cmd|
-      args = cmd.split(/\s+/)
+      args = Shellwords.split(cmd)
       args.unshift Bahia.command
       args.unshift({'RUBYLIB' => "#{Bahia.project_directory}/lib:" +
                    ENV['RUBYLIB']})

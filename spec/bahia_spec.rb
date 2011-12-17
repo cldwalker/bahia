@@ -67,10 +67,31 @@ describe Bahia do
       Bahia.instance_method(:blarg).should_not be_nil
     end
 
-    it "helper method blarg calls Open3.capture with correct args" do
-      Open3.should_receive(:capture3).with(
-        {'RUBYLIB' => "/dir/lib:#{ENV['RUBYLIB']}"}, executable, 'arg1', 'arg2')
-      test_class.new.blarg('arg1 arg2')
+    context "helper method blarg correctly calls Open3.capture" do
+      def open3_receives(*args)
+        Open3.should_receive(:capture3).with(
+          {'RUBYLIB' => "/dir/lib:#{ENV['RUBYLIB']}"}, executable, *args)
+      end
+
+      it "with word arguments" do
+        open3_receives 'is', 'blarg'
+        test_class.new.blarg('is blarg')
+      end
+
+      it "with single quoted arguments" do
+        open3_receives 'this', 'single quoteness'
+        test_class.new.blarg("this 'single quoteness'")
+      end
+
+      it "with double quoted arguments" do
+        open3_receives 'this', 'double quoteness'
+        test_class.new.blarg('this "double quoteness"')
+      end
+
+      it "with escaped quote arguments" do
+        open3_receives "can't", 'be', 'stopped'
+        test_class.new.blarg("can\\'t be stopped")
+      end
     end
   end
 end
