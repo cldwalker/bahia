@@ -19,7 +19,7 @@ module Bahia
       raise DetectionError.new(:command)
     self.command_method ||= File.basename(command)
 
-    define_method(command_method) do |cmd|
+    define_method(command_method) do |cmd = ''|
       args = Shellwords.split(cmd)
       args.unshift Bahia.command
       args.unshift({'RUBYLIB' => "#{Bahia.project_directory}/lib:" +

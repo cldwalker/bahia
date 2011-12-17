@@ -73,6 +73,11 @@ describe Bahia do
           {'RUBYLIB' => "/dir/lib:#{ENV['RUBYLIB']}"}, executable, *args)
       end
 
+      it "with no arguments" do
+        open3_receives
+        test_class.new.blarg
+      end
+
       it "with word arguments" do
         open3_receives 'is', 'blarg'
         test_class.new.blarg('is blarg')
