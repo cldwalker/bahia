@@ -7,8 +7,31 @@ onde nasceu capoeira. In other words, aruba for any non-cucumber test framework.
 Usage
 =====
 
-Say you want to test your gem's executable, blarg. So in your
-{test,spec}/helper.rb, you:
+Say you want to test your gem's executable, blarg:
+
+    describe "blarg" do
+      it "prints usage without args" do
+        blarg
+        stdout.should == 'Usage: blarg COMMAND'
+      end
+
+      it 'prints error for double blarging' do
+        blarg "blarg"
+        stderr.should == "Bad human! No double blarging allowed"
+        process.success?.should == false
+      end
+
+      it "prints message for quoted args" do
+        blarg %[please handle 'blarg multiple' "blarg words"]
+        stdout.should == "Why u like quote so much?"
+        process.success?.should == true
+      end
+    end
+
+As you can see, bahia provided helpers stdout, stderr and process as well as
+automatically creates a method to invoke your executable.
+
+Setting it up in your {test,spec}/helper.rb is just a simple include:
 
     require 'bahia'
 
@@ -27,25 +50,6 @@ Say you want to test your gem's executable, blarg. So in your
 
     # for your preferred framework
     include some shit ...
-
-Now acceptance test away your executable:
-
-    describe "blarg" do
-      it "prints usage without args" do
-        blarg ""
-        stdout.should == 'Usage: blarg COMMAND'
-        process.success?.should == true
-      end
-
-      it 'prints error for double blarging' do
-        blarg "blarg"
-        stderr.should == "Bad human! No double blarging allowed"
-        process.success?.should == false
-      end
-    end
-
-As you can see, bahia provided helpers stdout, stderr and process as well as
-automatically creates a blarg method.
 
 If the above doesn't automagically work for you, configure Bahia before
 including it:
