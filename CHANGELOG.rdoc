@@ -1,3 +1,7 @@
+== 0.4
+* Add support for 1.8.7
+* Fix handling of nil and blank $RUBYLIB
+
 == 0.3
 * Add support for quoted args
 * Allow no arguments
