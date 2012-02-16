@@ -99,16 +99,16 @@ describe Bahia do
         test_class.new.blarg("can\\'t be stopped")
       end
 
-      context "when $RUBLIB" do
+      context "when $RUBYLIB" do
         before { @rubylib = ENV.delete('RUBYLIB') }
         after { ENV['RUBYLIB'] = @rubylib }
 
-        it "with no $RUBYLIB" do
+        it "is nil" do
           open3_receives
           test_class.new.blarg
         end
 
-        it "with blank $RUBYLIB" do
+        it "is blank" do
           ENV['RUBYLIB'] = ''
           open3_receives
           test_class.new.blarg
