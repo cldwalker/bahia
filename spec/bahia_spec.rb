@@ -78,16 +78,6 @@ describe Bahia do
         test_class.new.blarg
       end
 
-      it "with no $RUBYLIB" do
-        rubylib = ENV.delete('RUBYLIB')
-
-        Open3.should_receive(:capture3).with(
-          {'RUBYLIB' => "/dir/lib"}, executable)
-        test_class.new.blarg
-
-        ENV['RUBYLIB'] = rubylib
-      end
-
       it "with word arguments" do
         open3_receives 'is', 'blarg'
         test_class.new.blarg('is blarg')
@@ -106,6 +96,25 @@ describe Bahia do
       it "with escaped quote arguments" do
         open3_receives "can't", 'be', 'stopped'
         test_class.new.blarg("can\\'t be stopped")
+      end
+
+      context "when $RUBLIB" do
+        before { @rubylib = ENV.delete('RUBYLIB') }
+        after { ENV['RUBYLIB'] = @rubylib }
+
+        it "with no $RUBYLIB" do
+          Open3.should_receive(:capture3).with(
+            {'RUBYLIB' => "/dir/lib"}, executable)
+          test_class.new.blarg
+        end
+
+        it "with blank $RUBYLIB" do
+          ENV['RUBYLIB'] = ''
+
+          Open3.should_receive(:capture3).with(
+            {'RUBYLIB' => "/dir/lib"}, executable)
+          test_class.new.blarg
+        end
       end
     end
   end
