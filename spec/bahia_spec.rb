@@ -70,7 +70,8 @@ describe Bahia do
     context "helper method blarg correctly calls Open3.capture" do
       def open3_receives(*args)
         Open3.should_receive(:capture3).with(
-          {'RUBYLIB' => "/dir/lib:#{ENV['RUBYLIB']}"}, executable, *args)
+          {'RUBYLIB' => "/dir/lib:#{ENV['RUBYLIB']}".sub(/:\s*$/, '')},
+          executable, *args)
       end
 
       it "with no arguments" do
@@ -103,16 +104,13 @@ describe Bahia do
         after { ENV['RUBYLIB'] = @rubylib }
 
         it "with no $RUBYLIB" do
-          Open3.should_receive(:capture3).with(
-            {'RUBYLIB' => "/dir/lib"}, executable)
+          open3_receives
           test_class.new.blarg
         end
 
         it "with blank $RUBYLIB" do
           ENV['RUBYLIB'] = ''
-
-          Open3.should_receive(:capture3).with(
-            {'RUBYLIB' => "/dir/lib"}, executable)
+          open3_receives
           test_class.new.blarg
         end
       end
