@@ -19,13 +19,18 @@ module Bahia
       raise DetectionError.new(:command)
     self.command_method ||= File.basename(command)
 
-    define_method(command_method) do |cmd = ''|
-      args = Shellwords.split(cmd)
-      args.unshift Bahia.command
-      args.unshift('RUBYLIB' =>
-       "#{Bahia.project_directory}/lib:#{ENV['RUBYLIB']}".sub(/:\s*$/, ''))
-      @stdout, @stderr, @process = Open3.capture3(*args)
+    # We want only want ane optional arg, thank 1.8.7 for the splat
+    define_method(command_method) do |*cmd|
+      @stdout, @stderr, @process = Bahia.run_command(cmd.shift || '')
     end
+  end
+
+  def self.run_command(cmd)
+    args = Shellwords.split(cmd)
+    args.unshift Bahia.command
+    args.unshift('RUBYLIB' =>
+     "#{Bahia.project_directory}/lib:#{ENV['RUBYLIB']}".sub(/:\s*$/, ''))
+    Open3.capture3(*args)
   end
 
   def self.set_project_directory(arr)
