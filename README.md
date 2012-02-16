@@ -60,7 +60,6 @@ including it:
 
 About
 =====
-
 Bahia uses open3 and is dead simple - so simple that you probably should've read
 the source instead of this readme. Ha!
 
