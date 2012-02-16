@@ -22,8 +22,8 @@ module Bahia
     define_method(command_method) do |cmd = ''|
       args = Shellwords.split(cmd)
       args.unshift Bahia.command
-      args.unshift({'RUBYLIB' => "#{Bahia.project_directory}/lib:" +
-                   ENV['RUBYLIB']})
+      args.unshift('RUBYLIB' => ["#{Bahia.project_directory}/lib",
+        ENV['RUBYLIB']].compact.join(':'))
       @stdout, @stderr, @process = Open3.capture3(*args)
     end
   end
