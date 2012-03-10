@@ -40,7 +40,7 @@ module Bahia
     pid, stdin, stdout, stderr = Open4.open4(*args)
     _, status = Process.wait2(pid)
     out, err = stdout.read, stderr.read
-    [stdin, stdout, stderr].each(&:close)
+    [stdin, stdout, stderr].map(&:close)
     [out, err, status]
   end
 
