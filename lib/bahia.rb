@@ -26,11 +26,19 @@ module Bahia
   end
 
   def self.run_command(cmd)
-    args = Shellwords.split(cmd)
-    args.unshift Bahia.command
-    args.unshift('RUBYLIB' =>
-     "#{Bahia.project_directory}/lib:#{ENV['RUBYLIB']}".sub(/:\s*$/, ''))
-    Open3.capture3(*args)
+    if RUBY_DESCRIPTION[/jruby/] || RUBY_DESCRIPTION[/rubinius/]
+      require 'systemu'
+      env = { 'RUBYLIB' =>
+       "#{Bahia.project_directory}/lib:#{ENV['RUBYLIB']}".sub(/:\s*$/, '') }
+      status, stdout, stderr = systemu Bahia.command + ' ' + cmd, 'env' => env
+      [stdout, stderr, status]
+    else
+      args = Shellwords.split(cmd)
+      args.unshift Bahia.command
+      args.unshift('RUBYLIB' =>
+       "#{Bahia.project_directory}/lib:#{ENV['RUBYLIB']}".sub(/:\s*$/, ''))
+      Open3.capture3(*args)
+    end
   end
 
   def self.set_project_directory(arr)
