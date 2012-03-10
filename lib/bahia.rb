@@ -30,7 +30,18 @@ module Bahia
     args.unshift Bahia.command
     args.unshift('RUBYLIB' =>
      "#{Bahia.project_directory}/lib:#{ENV['RUBYLIB']}".sub(/:\s*$/, ''))
-    Open3.capture3(*args)
+    exec_command *args
+  end
+
+  def self.exec_command(*args)
+    return Open3.capture3(*args) unless RUBY_DESCRIPTION.include?('rubinius')
+
+    require 'open4'
+    pid, stdin, stdout, stderr = Open4.open4(*args)
+    _, status = Process.wait2(pid)
+    out, err = stdout.read, stderr.read
+    [stdin, stdout, stderr].each(&:close)
+    [out, err, status]
   end
 
   def self.set_project_directory(arr)
