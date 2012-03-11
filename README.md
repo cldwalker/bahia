@@ -63,9 +63,11 @@ About
 =====
 Bahia uses open3 and is dead simple - so simple that you probably should've read
 the source instead of this readme. Ha!
+Edit: open3 isn't so simple for other rubies so the joke is on me.
 
-Edit: open3 isn't so simple for other rubies so the joke is on me. Rubinius uses
-open4 and jruby doesn't support process.
+Limitations
+===========
+Can't capture process in jruby yet.
 
 Contributing
 ============
