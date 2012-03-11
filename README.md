@@ -3,6 +3,7 @@ Description
 
 Bahia - where commandline acceptance tests are easy, the people are festive and
 onde nasceu capoeira. In other words, aruba for any non-cucumber test framework.
+Works across rubies on 1.8 and 1.9.
 
 Usage
 =====
@@ -62,6 +63,9 @@ About
 =====
 Bahia uses open3 and is dead simple - so simple that you probably should've read
 the source instead of this readme. Ha!
+
+Edit: open3 isn't so simple for other rubies so the joke is on me. Rubinius uses
+open4 and jruby doesn't support process.
 
 Contributing
 ============
