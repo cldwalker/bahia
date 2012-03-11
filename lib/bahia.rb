@@ -34,16 +34,24 @@ module Bahia
   end
 
   def self.exec_command(*args)
-    return Open3.capture3(*args) unless RUBY_DESCRIPTION.include?('rubinius')
+    unless RUBY_ENGINE[/rbx/] || RUBY_ENGINE[/jruby/]
+      return Open3.capture3(*args)
+    end
 
-    env = args.shift
-    env.each {|k,v| ENV[k] = v }
-    require 'open4'
-    pid, stdin, stdout, stderr = Open4.open4(*args)
-    _, status = Process.wait2(pid)
-    out, err = stdout.read, stderr.read
-    [stdin, stdout, stderr].each(&:close)
-    [out, err, status]
+    args.shift.each {|k,v| ENV[k] = v }
+
+    if RUBY_ENGINE[/jruby/]
+      i, o, e = IO.popen3(*args)
+      stdout, stderr = read_and_close(i, o, e)
+      # status not supported until Open3 actually works
+      [stdout, stderr, nil]
+    else
+      require 'open4'
+      pid, stdin, stdout, stderr = Open4.open4(*args)
+      _, status = Process.wait2(pid)
+      out, err = read_and_close(stdin, stdout, stderr)
+      [out, err, status]
+    end
   end
 
   def self.set_project_directory(arr)
@@ -58,5 +66,13 @@ module Bahia
       dir = File.dirname(dir)
     end
     File.dirname dir
+  end
+
+  private
+  def self.read_and_close(stdin, stdout, stderr)
+    out_reader = Thread.new { stdout.read }
+    err_reader = Thread.new { stderr.read }
+    stdin.close
+    [out_reader.value, err_reader.value]
   end
 end
