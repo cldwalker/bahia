@@ -36,11 +36,13 @@ module Bahia
   def self.exec_command(*args)
     return Open3.capture3(*args) unless RUBY_DESCRIPTION.include?('rubinius')
 
+    env = args.shift
+    env.each {|k,v| ENV[k] = v }
     require 'open4'
     pid, stdin, stdout, stderr = Open4.open4(*args)
     _, status = Process.wait2(pid)
     out, err = stdout.read, stderr.read
-    [stdin, stdout, stderr].map(&:close)
+    [stdin, stdout, stderr].each(&:close)
     [out, err, status]
   end
 
