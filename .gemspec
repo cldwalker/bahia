@@ -13,8 +13,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = ">= 1.3.6"
   s.add_dependency 'open4', '~> 1.3.0'
   s.add_development_dependency 'rspec', '~> 2.7.0'
-  s.files = Dir.glob(%w[{lib,spec}/**/*.rb bin/* [A-Z]*.{md,txt,rdoc} ext/**/*.{rb,c} **/deps.rip]) + %w{Rakefile .gemspec}
-  s.files += %w{.travis.yml}
+  s.files = Dir.glob(%w[{lib,spec}/**/*.rb bin/* [A-Z]*.{md,txt,rdoc} ext/**/*.{rb,c} **/deps.rip]) + %w{Rakefile .gemspec .travis.yml}
   s.extra_rdoc_files = ["README.md", "LICENSE.txt"]
   s.license = 'MIT'
 end
