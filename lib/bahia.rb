@@ -60,8 +60,8 @@ module Bahia
     raise DetectionError.new(:project_directory) unless File.exists?(file)
 
     dir = File.dirname(file)
-    # Assume test directory called spec or test
-    until dir[%r{/(spec|test)$}]
+    # Look for bin or test directory called spec or test
+    until dir[%r{/(bin|spec|test)$}]
       raise DetectionError.new(:project_directory) if dir == '/'
       dir = File.dirname(dir)
     end
