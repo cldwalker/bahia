@@ -1,3 +1,6 @@
+== 0.5.1
+* Support unusually named test directories
+
 == 0.5
 * Add support for other rubies with open4
 

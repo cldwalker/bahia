@@ -63,7 +63,8 @@ About
 =====
 Bahia uses open3 and is dead simple - so simple that you probably should've read
 the source instead of this readme. Ha!
-Edit: open3 isn't so simple for other rubies so the joke is on me.
+
+Edit: open3 don't work for 1.9 rubies so the joke is on me.
 
 Limitations
 ===========
