@@ -55,6 +55,8 @@ module Bahia
   end
 
   def self.set_project_directory(arr)
+    # get rid of rspec backtrace
+    arr = arr.drop_while {|e| e[/rspec/] } if arr[0][/rspec/]
     arr[0][/^([^:]+):\d+/] or raise DetectionError.new(:project_directory)
     file = $1
     raise DetectionError.new(:project_directory) unless File.exists?(file)

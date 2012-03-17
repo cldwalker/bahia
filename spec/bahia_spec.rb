@@ -8,8 +8,9 @@ describe Bahia do
     Bahia.command = Bahia.project_directory = Bahia.command_method = nil
   end
 
-  def stub_directory(dir)
-    Bahia.should_receive(:caller).at_least(1).and_return(["#{dir}/helper.rb:5"])
+  def stub_directory(dir, options = {})
+    stack = options[:stack] || ["#{dir}/helper.rb:5"]
+    Bahia.should_receive(:caller).at_least(1).and_return(stack)
     File.should_receive(:exists?).at_least(1).and_return(true)
   end
 
@@ -73,27 +74,46 @@ describe Bahia do
 
   context "on successful inclusion" do
     let(:executable) { '/dir/bin/blarg' }
+    let(:stub_directory_options) { {} }
 
     before do
-      stub_directory '/dir/spec'
+      stub_directory '/dir/spec', stub_directory_options
       Dir.stub(:[]).with('/dir/bin/*').and_return([executable])
       subject
     end
 
-    it "sets project_directory" do
-      Bahia.project_directory.should == '/dir'
+    context "for normal backtrace" do
+      it "sets project_directory" do
+        Bahia.project_directory.should == '/dir'
+      end
+
+      it "sets command" do
+        Bahia.command.should == executable
+      end
+
+      it "sets command_method" do
+        Bahia.command_method.should == 'blarg'
+      end
+
+      it "defines helper method named blarg" do
+        Bahia.instance_method(:blarg).should_not be_nil
+      end
     end
 
-    it "sets command" do
-      Bahia.command.should == executable
-    end
+    context "for rspec backtrace" do
+      let(:stub_directory_options) {
+        {
+          :stack => [
+            "/gems/rspec-core-2.8.0/lib/rspec/core/configuration.rb:680: in `include'",
+            "/gems/rspec-core-2.8.0/lib/rspec/core/configuration.rb:680: in `block in configure_group'",
+            '/dir/spec/helper.rb:5'
+          ]
+        }
+      }
 
-    it "sets command_method" do
-      Bahia.command_method.should == 'blarg'
-    end
-
-    it "defines helper method named blarg" do
-      Bahia.instance_method(:blarg).should_not be_nil
+      it "sets project_directory" do
+        Bahia.project_directory.should == '/dir'
+      end
     end
 
     context "helper method blarg correctly executes command" do
