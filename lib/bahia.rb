@@ -15,11 +15,11 @@ module Bahia
 
   def self.included(mod)
     self.project_directory ||= set_project_directory(caller)
-    self.command = Dir[self.project_directory + '/bin/*'][0] or
+    self.command ||= Dir[self.project_directory + '/bin/*'][0] or
       raise DetectionError.new(:command)
     self.command_method ||= File.basename(command)
 
-    # We want only want ane optional arg, thank 1.8.7 for the splat
+    # We want only want one optional arg, thank 1.8.7 for the splat
     define_method(command_method) do |*cmd|
       @stdout, @stderr, @process = Bahia.run_command(cmd.shift || '')
     end

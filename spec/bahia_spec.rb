@@ -42,12 +42,22 @@ describe Bahia do
     end
   end
 
-  context "when overriding project_directory" do
-    it "sets the override" do
+  context "when overriding" do
+    it "sets project_directory" do
       Dir.stub(:[]).with('/blah/bin/*').and_return(["/blah/bin/blah"])
       Bahia.project_directory = "/blah"
+
       subject
       Bahia.project_directory.should == "/blah"
+    end
+
+    it "sets command" do
+      Dir.stub(:[]).with('/blah/bin/*').and_return(["/blah/bin/blah"])
+      stub_directory '/blah/spec'
+      Bahia.command = 'blarg'
+
+      subject
+      Bahia.command.should == "blarg"
     end
   end
 
