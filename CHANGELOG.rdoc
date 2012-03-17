@@ -1,3 +1,7 @@
+== 0.6.0
+* Fix overriding project_directory and command
+* Actually auto detect project_directory for rspec
+
 == 0.5.1
 * Support unusually named test directories
 

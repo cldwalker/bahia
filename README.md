@@ -77,4 +77,5 @@ Contributing
 Credits
 =======
 
-* @spicycode
+* @spicycode - initial testing
+* @rsanheim - allow project\_directory override
