@@ -14,7 +14,7 @@ module Bahia
   attr_reader :stdout, :stderr, :process
 
   def self.included(mod)
-    self.project_directory = set_project_directory(caller)
+    self.project_directory ||= set_project_directory(caller)
     self.command = Dir[self.project_directory + '/bin/*'][0] or
       raise DetectionError.new(:command)
     self.command_method ||= File.basename(command)

@@ -42,6 +42,15 @@ describe Bahia do
     end
   end
 
+  context "when overriding project_directory" do
+    it "sets the override" do
+      Dir.stub(:[]).with('/blah/bin/*').and_return(["/blah/bin/blah"])
+      Bahia.project_directory = "/blah"
+      subject
+      Bahia.project_directory.should == "/blah"
+    end
+  end
+
   context "on successful inclusion" do
     let(:executable) { '/dir/bin/blarg' }
 
