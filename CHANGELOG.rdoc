@@ -1,3 +1,6 @@
+== 0.7.0
+* More user-friendly message for failed autodetection
+
 == 0.6.0
 * Fix overriding project_directory and command
 * Actually auto detect project_directory for rspec
