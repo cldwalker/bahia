@@ -6,7 +6,7 @@ module Bahia
 
   class DetectionError < StandardError
     def initialize(name)
-      super "Unable to detect #{name}. Set it with Bahia.#{name}"
+      super "Unable to detect #{name}. Set Bahia.#{name} before including Bahia."
     end
   end
 
@@ -23,6 +23,9 @@ module Bahia
     define_method(command_method) do |*cmd|
       @stdout, @stderr, @process = Bahia.run_command(cmd.shift || '')
     end
+  rescue DetectionError => err
+    msg = "bahia: #{err}"
+    abort "\n" + "*" * msg.size + "\n#{msg}\n" + "*" * msg.size + "\n\n"
   end
 
   def self.run_command(cmd)

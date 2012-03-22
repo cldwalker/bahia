@@ -17,29 +17,34 @@ describe Bahia do
   subject { test_class.send :include, Bahia }
 
   context "fails to include and raises DetectionError" do
+    def error(ivar)
+      msg = "bahia: " + Bahia::DetectionError.new(ivar).message
+      "\n" + "*" * msg.size + "\n#{msg}\n" + "*" * msg.size + "\n\n"
+    end
+
     it "if directory not detected" do
-      Bahia.should_receive(:caller).and_return(["(eval)"])
-      msg = Bahia::DetectionError.new(:project_directory).message
-      expect { subject }.to raise_error(msg)
+      Bahia.should_receive(:caller).at_least(1).and_return(["(eval)"])
+      Bahia.should_receive(:abort).with error(:project_directory)
+      subject
     end
 
     it "if directory does not exist" do
-      Bahia.should_receive(:caller).and_return(["(irb):5"])
-      msg = Bahia::DetectionError.new(:project_directory).message
-      expect { subject }.to raise_error(msg)
+      Bahia.should_receive(:caller).at_least(1).and_return(["(irb):5"])
+      Bahia.should_receive(:abort).with error(:project_directory)
+      subject
     end
 
     it "if test directory is not test or spec" do
       stub_directory '/dir/my_test'
-      msg = Bahia::DetectionError.new(:project_directory).message
-      expect { subject }.to raise_error(msg)
+      Bahia.should_receive(:abort).with error(:project_directory)
+      subject
     end
 
     it "if command isn't detected" do
       stub_directory '/dir/spec'
       Dir.should_receive(:[]).with('/dir/bin/*').and_return([])
-      msg = Bahia::DetectionError.new(:command).message
-      expect { subject }.to raise_error(msg)
+      Bahia.should_receive(:abort).with error(:command)
+      subject
     end
   end
 
