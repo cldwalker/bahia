@@ -37,13 +37,13 @@ module Bahia
   end
 
   def self.exec_command(*args)
-    unless RUBY_ENGINE[/rbx/] || RUBY_ENGINE[/jruby/]
+    unless RUBY_DESCRIPTION[/rubinius/] || RUBY_DESCRIPTION[/jruby/]
       return Open3.capture3(*args)
     end
 
     args.shift.each {|k,v| ENV[k] = v }
 
-    if RUBY_ENGINE[/jruby/]
+    if RUBY_DESCRIPTION[/jruby/]
       i, o, e = IO.popen3(*args)
       stdout, stderr = read_and_close(i, o, e)
       # status not supported until Open3 actually works
