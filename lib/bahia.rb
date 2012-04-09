@@ -2,7 +2,7 @@ require 'open3'
 require 'shellwords'
 
 module Bahia
-  VERSION = '0.7.1'
+  VERSION = '0.7.2'
 
   class DetectionError < StandardError
     def initialize(name)

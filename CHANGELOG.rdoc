@@ -1,3 +1,7 @@
+== 0.7.2
+* Add acceptance spec
+* Really, it works on 1.8.7 now
+
 == 0.7.1
 * Actually work in 1.8.7
 
