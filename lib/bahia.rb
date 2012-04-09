@@ -37,7 +37,7 @@ module Bahia
   end
 
   def self.exec_command(*args)
-    unless RUBY_DESCRIPTION[/rubinius/] || RUBY_DESCRIPTION[/jruby/]
+    unless RUBY_DESCRIPTION[/rubinius|jruby|ruby 1\.8\.7/]
       return Open3.capture3(*args)
     end
 

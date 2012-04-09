@@ -37,4 +37,11 @@ describe "Acceptance test Bahia" do
     run_command "hello"
     @stderr.should =~ /^I'm sleeping!/
   end
+
+  unless RUBY_DESCRIPTION[/jruby/]
+    it "detects stdout" do
+      run_command
+      @process.class.should == Process::Status
+    end
+  end
 end
